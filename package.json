@@ -4,6 +4,8 @@
   "description": "es6 学习小 demo.",
   "main": "index.js",
   "scripts": {
+    "build:Array": "babel src/Array/* -o dist/Array/*.js",
+    "build:Object": "babel src/Object/object1.js -o dist/Object/object1.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,6 +21,7 @@
   "homepage": "https://github.com/JianwenXu/es6-demo#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1"
   }
 }
