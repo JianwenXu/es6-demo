@@ -10,142 +10,124 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// 本质上，ES6 的类只是 ES5 的构造函数的一层包装，所以函数的许多特性都被Class继承，包括name属性。
+// Class 可以通过extends关键字实现继承，这比 ES5 的通过修改原型链实现继承，要清晰和方便很多。
 
-var Point = function Point() {
-  _classCallCheck(this, Point);
-};
+// 对比：
+// ES5 的继承，实质是先创造子类的实例对象this，然后再将父类的方法添加到this上面（Parent.apply(this)）。
+// ES6 的继承机制完全不同，实质是先创造父类的实例对象this（所以必须先调用super方法），然后再用子类的构造函数修改this。
 
-// name属性总是返回紧跟在class关键字后面的类名。
+var Point = function () {
+  function Point(x, y) {
+    _classCallCheck(this, Point);
 
-
-console.log(' Point.name : ', Point.name); // Point
-
-// 与 ES5 一样，在“类”的内部可以使用get和set关键字，对某个属性设置存值函数和取值函数，拦截该属性的存取行为。
-
-var MyClass = function () {
-  function MyClass() {
-    _classCallCheck(this, MyClass);
+    this.x = x;
+    this.y = y;
   }
 
-  _createClass(MyClass, [{
-    key: 'prop',
-    get: function get() {
-      console.log('getter');
-    },
-    set: function set(value) {
-      console.log(' setter : ', value);
+  _createClass(Point, [{
+    key: 'toString',
+    value: function toString() {
+      return '(' + this.x + ', ' + this.y + ')';
     }
   }]);
 
-  return MyClass;
+  return Point;
 }();
 
-var inst = new MyClass();
+// super关键字表示父类的构造函数，用来新建父类的this对象。
 
-inst.prop = 123; // setter : 123
-console.log(' inst.prop ', inst.prop); // getter, inst.prop undefined？？
+var ColorPoint = function (_Point) {
+  _inherits(ColorPoint, _Point);
 
-// prop属性有对应的存值函数和取值函数，因此赋值和读取行为都被自定义了。
+  function ColorPoint(x, y, color) {
+    _classCallCheck(this, ColorPoint);
 
-// 存值函数和取值函数是设置在属性的 Descriptor 对象上的。----不懂哎
+    var _this = _possibleConstructorReturn(this, (ColorPoint.__proto__ || Object.getPrototypeOf(ColorPoint)).call(this, x, y));
 
-var descriptor = Object.getOwnPropertyDescriptor(MyClass.prototype, 'prop');
-
-console.log('"get" in descriptor', 'get' in descriptor); // true
-console.log('"set" in descriptor', 'set' in descriptor); // false
-
-// Class 的 Generator 方法---这个还没看，以后回过来看这一块
-
-// 静态方法
-
-var Foo = function () {
-  function Foo() {
-    _classCallCheck(this, Foo);
+    _this.color = color;
+    return _this;
   }
 
-  _createClass(Foo, [{
-    key: 'baz',
-    value: function baz() {
-      console.log('world');
-    }
-  }], [{
-    key: 'classMethod',
-    value: function classMethod() {
-      return 'hello static method';
-    }
-
-    // 如果静态方法包含this关键字，这个this指的是类，而不是实例。
-
-  }, {
-    key: 'bar',
-    value: function bar() {
-      this.baz(); // 等同于调用Foo.baz
-    }
-
-    // 静态方法可以与非静态方法重名。
-
-  }, {
-    key: 'baz',
-    value: function baz() {
-      console.log('hello');
+  _createClass(ColorPoint, [{
+    key: 'toString',
+    value: function toString() {
+      return this.color + ' ' + _get(ColorPoint.prototype.__proto__ || Object.getPrototypeOf(ColorPoint.prototype), 'toString', this).call(this);
     }
   }]);
 
-  return Foo;
-}();
+  return ColorPoint;
+}(Point);
 
-console.log(' Foo.classMethod() : ', Foo.classMethod()); // hello static method
+// 如果使用this的话，子类必须在constructor方法中调用super方法，且super的调用放在this出现之前，否则新建实例时会报错。
+// 这是因为子类没有自己的this对象，而是继承父类的this对象，然后对其进行加工。如果不调用super方法，子类就得不到this对象。
 
-var foo = new Foo();
-// 静态方法不会被实例继承，而是直接通过类来调用
-// console.log(' foo.classMethod() : ', foo.classMethod()); // 报错，因为方法不存在
+// 报错
+// class ColorPoint2 extends Point {
+//   constructor(color) {
+//     this.color = color;
+//   }
+//   toString() {
+//     return `color test`;
+//   }
+// }
 
-Foo.bar(); // hello
-foo.baz(); // world
+// 报错
+// class ColorPoint3 extends Point {
+//   constructor() {}
+// }
 
-// 父类的静态方法，可以被子类继承。
+// 不报错
+// 因为当子类没有定义constructor方法时，这个方法会被默认添加
 
-var Bar = function (_Foo) {
-  _inherits(Bar, _Foo);
 
-  function Bar() {
-    _classCallCheck(this, Bar);
+var ColorPoint4 = function (_Point2) {
+  _inherits(ColorPoint4, _Point2);
 
-    return _possibleConstructorReturn(this, (Bar.__proto__ || Object.getPrototypeOf(Bar)).apply(this, arguments));
+  function ColorPoint4() {
+    _classCallCheck(this, ColorPoint4);
+
+    return _possibleConstructorReturn(this, (ColorPoint4.__proto__ || Object.getPrototypeOf(ColorPoint4)).apply(this, arguments));
   }
 
-  return Bar;
-}(Foo);
+  return ColorPoint4;
+}(Point);
 
-console.log(' Bar.classMethod() : ', Bar.classMethod()); // 'hello static method'
+// ColorPoint4 和 ColorPoint5 是等价的
 
-// 静态方法也是可以从super对象上调用的。
 
-var Baz = function (_Foo2) {
-  _inherits(Baz, _Foo2);
+var ColorPoint5 = function (_Point3) {
+  _inherits(ColorPoint5, _Point3);
 
-  function Baz() {
-    _classCallCheck(this, Baz);
+  function ColorPoint5() {
+    var _ref;
 
-    return _possibleConstructorReturn(this, (Baz.__proto__ || Object.getPrototypeOf(Baz)).apply(this, arguments));
-  }
+    _classCallCheck(this, ColorPoint5);
 
-  _createClass(Baz, null, [{
-    key: 'classMethod',
-    value: function classMethod() {
-      return _get(Baz.__proto__ || Object.getPrototypeOf(Baz), 'classMethod', this).call(this) + ', extends from Foo';
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
     }
-  }]);
 
-  return Baz;
-}(Foo);
+    return _possibleConstructorReturn(this, (_ref = ColorPoint5.__proto__ || Object.getPrototypeOf(ColorPoint5)).call.apply(_ref, [this].concat(args)));
+  }
 
-console.log('Baz.classMethod() : ', Baz.classMethod()); // 'hello static method, extends from Foo'
+  return ColorPoint5;
+}(Point);
 
-// Class 的静态属性和实例属性
+var cp1 = new ColorPoint(1, 2, 'red');
+console.log(' cp1.toString() : ', cp1.toString());
+console.log(' cp1 instanceof ColorPoint : ', cp1 instanceof ColorPoint); // true
+console.log(' cp1 instanceof Point : ', cp1 instanceof Point); // true
 
-Foo.prop = 1;
-console.log(' Foo.prop : ', Foo.prop); // 1
+// const cp2 = new ColorPoint2();
+// console.log(' cp2.toString() : ', cp2.toString());
 
-// 只有这种写法可行，因为 ES6 明确规定，Class 内部只有静态方法，没有静态属性。
+// const cp3 = new ColorPoint3();
+
+var cp4 = new ColorPoint4();
+
+var cp5 = new ColorPoint5();
+
+// Object.getPrototypeOf方法可以用来从子类上获取父类。
+// 因此，可以使用这个方法判断，一个类是否继承了另一个类。
+
+console.log(' Object.getPrototypeOf(ColorPoint) === Point : ', Object.getPrototypeOf(ColorPoint) === Point); // true
