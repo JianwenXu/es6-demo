@@ -36,3 +36,64 @@ console.log('"get" in descriptor', 'get' in descriptor); // true
 console.log('"set" in descriptor', 'set' in descriptor); // false
 
 // Class 的 Generator 方法---这个还没看，以后回过来看这一块
+
+// 静态方法
+
+class Foo {
+  static classMethod() {
+    return 'hello static method';
+  }
+
+  // 如果静态方法包含this关键字，这个this指的是类，而不是实例。
+
+  static bar () {
+    this.baz(); // 等同于调用Foo.baz
+  }
+
+  // 静态方法可以与非静态方法重名。
+
+  static baz () {
+    console.log('hello');
+  }
+
+  baz () {
+    console.log('world');
+  }
+}
+
+console.log(' Foo.classMethod() : ', Foo.classMethod()); // hello static method
+
+const foo = new Foo();
+// 静态方法不会被实例继承，而是直接通过类来调用
+// console.log(' foo.classMethod() : ', foo.classMethod()); // 报错，因为方法不存在
+
+Foo.bar(); // hello
+foo.baz(); // world
+
+// 父类的静态方法，可以被子类继承。
+
+class Bar extends Foo {}
+
+console.log(' Bar.classMethod() : ', Bar.classMethod()); // 'hello static method'
+
+// 静态方法也是可以从super对象上调用的。
+
+class Baz extends Foo {
+  static classMethod() {
+    return super.classMethod() + ', extends from Foo';
+  }
+}
+
+console.log('Baz.classMethod() : ', Baz.classMethod()); // 'hello static method, extends from Foo'
+
+// Class 的静态属性和实例属性
+
+Foo.prop = 1;
+console.log(' Foo.prop : ', Foo.prop); // 1
+
+// 只有这种写法可行，因为 ES6 明确规定，Class 内部只有静态方法，没有静态属性。
+
+// new.target 属性
+// 1.用在构造函数中，要个要求必须使用new来创建实例
+// 2.可以写出不能独立使用、必须继承后才可以使用的类
+// 说明：这两种情况都是使用if...else 做判断，抛异常
