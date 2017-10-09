@@ -6,6 +6,7 @@
   "scripts": {
     "build:Array": "babel src/Array/* -o dist/Array/*.js",
     "build:Object": "babel src/Object/object1.js -o dist/Object/object1.js",
+    "build:Class": "babel src/Class/class3.js -o dist/Class/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
