@@ -6,7 +6,8 @@
   "scripts": {
     "build:Array": "babel src/Array/* -o dist/Array/*.js",
     "build:Object": "babel src/Object/object1.js -o dist/Object/index.js",
-    "build:Class": "babel src/Class/class7.js -o dist/Class/index.js",
+    "build:Class": "babel src/Class/class2.js -o dist/Class/index.js",
+    "build:Destructure": "babel src/Destructure/test3.js -o dist/Destructure/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -60,24 +60,25 @@ printName3(); // Hello there3
 
 // 下面的写法会报错，不知道为啥
 
-// class Logger4 {
-//   // printName4 = (name = 'there4') => {
-//   //   this.print(` Hello ${name}`);
-//   // }
+class Logger4 {
 
-//   printName4 = 123;
+  print(text){
+    console.log(text);
+  }
 
-//   print(text) {
-//     console.log(text);
-//   }
-// }
+  // printName4 = 123;
 
-// const logger4 = new Logger4();
-// const { printName4 } = logger4;
-// // logger4.printName4(); // Hello there4
-// // printName4(); // Hello there4
+  // printName4 = (name = 'there4') => {
+  //   this.print(` Hello ${name}`);
+  // }
+}
 
-// console.log(logger4.printName4);
-// console.log(printName4);
+const logger4 = new Logger4();
+const { printName4 } = logger4;
+// logger4.printName4(); // Hello there4
+// printName4(); // Hello there4
+
+console.log(logger4.printName4);
+console.log(printName4);
 
 // 解决方法3：使用Proxy，获取方法的时候，自动绑定this(那块还没看，稍后回过头来再说)
