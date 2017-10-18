@@ -4,7 +4,7 @@
   "description": "es6 学习小 demo.",
   "main": "index.js",
   "scripts": {
-    "build:Array": "babel src/Array/* -o dist/Array/*.js",
+    "build:Array": "babel src/Array/array2.js -o dist/Array/index.js",
     "build:Object": "babel src/Object/object1.js -o dist/Object/index.js",
     "build:Class": "babel src/Class/class2.js -o dist/Class/index.js",
     "build:Destructure": "babel src/Destructure/test6.js -o dist/Destructure/index.js",
